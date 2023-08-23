@@ -1,0 +1,13 @@
+log:
+  - name : system
+    level : debug
+    formatter : "%d{%Y-%m-%d %H:%M:%S}%T[%p]%T[%c]%T%F:%l%T%m%n"
+    appenders : 
+              - type : FileLogAppender
+                prefixName : "testLogConfig"
+              - type : StdoutLogAppender
+
+  - name : root
+    level : INFO
+    appenders :
+              - type : StdoutLogAppender
