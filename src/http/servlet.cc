@@ -19,7 +19,7 @@ namespace lunar {
 
         ServletDispatch::ServletDispatch()
             :Servlet("ServletDispatch") {
-            m_default.reset(new NotFoundServlet("sylar/1.0"));
+            m_default.reset(new NotFoundServlet("lunar/1.0"));
         }
 
         int32_t ServletDispatch::handle(lunar::http::HttpRequest::ptr request
@@ -155,7 +155,7 @@ namespace lunar {
                         , lunar::http::HttpResponse::ptr response
                         , lunar::http::HttpSession::ptr session) {
             response->setStatus(lunar::http::HttpStatus::NOT_FOUND);
-            response->setHeader("Server", "sylar/1.0.0");
+            response->setHeader("Server", "lunar/1.0.0");
             response->setHeader("Content-Type", "text/html");
             response->setBody(m_content);
             return 0;

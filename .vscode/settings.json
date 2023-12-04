@@ -48,6 +48,7 @@
         "valarray": "cpp",
         "string": "cpp",
         "cassert": "cpp",
-        "memory": "cpp"
+        "memory": "cpp",
+        "algorithm": "cpp"
     }
 }

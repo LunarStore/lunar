@@ -159,7 +159,6 @@ namespace lunar {
         
         std::vector<std::string> files;
         lunar::FSUtil::ListAllFile(files, path, ".so");
-
         std::sort(files.begin(), files.end());
         for(auto& i : files) {
             initModule(i);

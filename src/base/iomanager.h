@@ -42,15 +42,16 @@ namespace lunar{
                 void reset();
                 Fiber::ptr m_fiber = nullptr;
                 std::function<void(void)> m_cb = nullptr;
-                Scheduler* m_scheduler = nullptr;
+                //记录协程调度器，表示，当事件发生，fiber or callback应该使用哪个协程调度器调度。
+                Scheduler* m_scheduler = nullptr;   
             };
             // nolock
             void TrigleEvent(Event event);
             EventContext& getEventContext(Event event);
             void resetEventContext(Event event);
-            EventContext read;
-            EventContext write;
-            Event m_events = NONE;
+            EventContext read;  //读事件Handle
+            EventContext write; //写事件Handle
+            Event m_events = NONE;  //记录当前FdContext哪些事件有效
             int m_fd = -1;
             MutexType m_mutex;
         };

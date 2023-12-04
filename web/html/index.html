@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>我的的主页</title>
+    <style type="text/css">
+        table {
+            width: 60%;
+            margin: 0 auto;
+            /* border: 1px solid black; */
+            border-collapse: collapse;
+        }
+
+        td {
+            border-bottom: 1px solid black;
+            height: 52px;
+            text-align: center;
+        }
+        div{
+            margin-top: 100px;
+            margin-bottom: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <table id="diy">
+            <caption>作者的个人项目</caption>
+            <tr>
+                <td>名称</td>
+                <td>链接</td>
+                <td>简介</td>
+                <td>阅读难度</td>
+            </tr>
+            <tr>
+                <td>基于协程的高性能服务器</td>
+                <td><a href="https://gitdub.com/LunarStore/lunar.git">链接</a></td>
+                <td>实现了日志模块、配置模块、封装了必要的PosixAPI，协程调度模块、IO协程调度模块、Hook模块等</td>
+                <td>***</td>
+            </tr>
+            <tr>
+                <td>MIT6.824实验（现MIT6.5840）</td>
+                <td><a href="https://github.com/LunarStore/MIT6.824.git">链接</a></td>
+                <td>lab1是实现一个MapReduce，lab2、ab3、lab4是实现一个分布式KV数据库</td>
+                <td>***</td>
+            </tr>
+        </table>
+    </div>
+    <div>
+        <table id="read">
+            <caption>推荐阅读源码</caption>
+            <tr>
+                <td>名称</td>
+                <td>链接</td>
+                <td>简介</td>
+                <td>阅读难度</td>
+            </tr>
+            <tr>
+                <td>陈硕的Muduo网络库</td>
+                <td><a href="https://gitdub.com/chenshuo/muduo.git">链接</a></td>
+                <td>实现了异步日志和线程池，采用One loop per tdread的思想实现了高性能的网络库</td>
+                <td>**</td>
+            </tr>
+            <tr>
+                <td>Google的高性能K-V存储引擎：LevelDB</td>
+                <td><a href="https://gitdub.com/google/leveldb.git">链接</a></td>
+                <td>使用跳表作为内存数据结构，SSTable作为持久化到磁盘的数据结构，采用LSMTree利用顺序写优化随机写的方式，支持MVCC</td>
+                <td>***</td>
+            </tr>
+            <tr>
+                <td>一个单核操作系统Onix</td>
+                <td><a href="https://gitdub.com/StevenBaby/onix.git">链接</a></td>
+                <td>实现了虚拟内存、进程、内核态线程、进程调度、文件系统、TCP/IP协议栈等</td>
+                <td>****</td>
+            </tr>
+        </table>
+    </div>
+
+    <script type="text/javascript">
+        function tableFun(cond){
+            var elems = document.querySelectorAll(cond);
+            for(var it = 1; it < elems.length; it++){
+                if(it % 2 == 0){
+                    elems[it].style.backgroundColor = 'grey';
+                    elems[it].style.color = 'black';
+                }
+            }
+        }
+        tableFun('#read tr');
+        tableFun('#diy tr');
+
+    </script>
+</body>
+</html>

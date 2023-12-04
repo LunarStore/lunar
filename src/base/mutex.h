@@ -173,6 +173,11 @@ namespace lunar{
         bool waitForSeconds(time_t seconds);
         void post();
         int8_t getSem();
+        void reset(){
+            Mutex::Lock lock(m_mutex);
+
+            m_sem = 0;
+        }
     private:
         std::list<std::pair<IOManager*, std::shared_ptr<Fiber>>> m_waitQueue;
         int8_t m_sem;

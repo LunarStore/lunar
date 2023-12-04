@@ -1,5 +1,5 @@
 #include "base/log.h"
-#include "config.h"
+#include "base/config.h"
 
 namespace lunar{
 
@@ -619,16 +619,6 @@ namespace lunar{
         LoggerMgr::GetInstance()->addLogger(name, logger)
 
         XX("system", logger);
-        #undef XX
-
-        #define XX(name, logger) \
-        logger.reset(new Logger("destroy"));\
-        logger->setFormatter(LogFormatter::ptr(new LogFormatter("%d{%Y-%m-%d %H:%M:%S}%T%t%T%F%T[%p]%T[%c]%T%f:%l%T%m%n")));\
-        logger->addAppender(LogAppender::ptr(new StdoutLogAppender()));\
-        LoggerMgr::GetInstance()->addLogger(name, logger)
-
-
-        XX("destroy", logger);
         #undef XX
 
         loggerDefines->addListener([](const std::set<LoggerDefine>& oldVal, 

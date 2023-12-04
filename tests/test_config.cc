@@ -38,11 +38,20 @@ void test_yaml(){
     LUNAR_LOG_DEBUG(g_logger) << node["name"].IsScalar();
 }
 
-void test_logConfig(){
-    LUNAR_LOG_DEBUG(g_logger) << "hello1";
-    lunar::ConfigVarMgr::GetInstance()->loadFromFile("log.yml");
+
+    // LUNAR_LOG_DEBUG(g_logger) << "hello1";
+    // lunar::ConfigVarMgr::GetInstance()->loadFromFile("log.yml");
     
-    LUNAR_LOG_INFO(g_logger) << "hello2";
+    // LUNAR_LOG_INFO(g_logger) << "hello2";
+
+
+void test_logConfig(){
+    lunar::ConfigVar<std::vector<int>>::ptr vec = lunar::ConfigVarMgr::GetInstance()->lookUp("space.vec", std::vector<int>(), "vec test");
+    lunar::ConfigVar<int>::ptr num = lunar::ConfigVarMgr::GetInstance()->lookUp("space.num", int(), "num test");
+    lunar::ConfigVarMgr::GetInstance()->loadFromFile("test_config.yml");
+
+    LUNAR_LOG_INFO(g_logger) << vec->toString();
+    LUNAR_LOG_INFO(g_logger) << num->toString();
 }
 int main(){
     

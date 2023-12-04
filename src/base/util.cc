@@ -108,7 +108,7 @@ namespace lunar{
         std::string* ss = nullptr;
         const char* end = str.c_str() + str.length();
         for(const char* c = str.c_str() ; c < end; ++c) {
-            if(!CHAR_IS_UNRESERVED(*c)) {
+            if(!CHAR_IS_UNRESERVED(*c)) {       //保留的字符宏返回true，不保留的字符宏返回false
                 if(!ss) {
                     ss = new std::string;
                     ss->reserve(str.size() * 1.2);
@@ -125,7 +125,7 @@ namespace lunar{
                 ss->append(1, *c);
             }
         }
-        if(!ss) {
+        if(!ss) {   //没有空格，且字符都可以保留，直接返回str就行
             return str;
         } else {
             std::string rt = *ss;
@@ -138,7 +138,7 @@ namespace lunar{
         std::string* ss = nullptr;
         const char* end = str.c_str() + str.length();
         for(const char* c = str.c_str(); c < end; ++c) {
-            if(*c == '+' && space_as_plus) {
+            if(*c == '+' && space_as_plus) {    //遇到加号，且space_as_plus为true将加号还原成空格。
                 if(!ss) {
                     ss = new std::string;
                     ss->append(str.c_str(), c - str.c_str());

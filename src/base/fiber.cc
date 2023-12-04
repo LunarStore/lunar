@@ -68,9 +68,9 @@ namespace lunar{
         }
         s_fiber_count--;
         //GetThis()->getId();
-        LUNAR_LOG_DEBUG(g_logger) << "Fiber::~Fiber()id=" << m_id;
+        //LUNAR_LOG_DEBUG(g_logger) << "Fiber::~Fiber()id=" << m_id;
         //Thread::GetName();
-        //std::cout << "[raw log]\t" << __FILE__  << ":" << __LINE__ << "\tFiber::~Fiber()id=" << m_id << std::endl;
+        std::cout << "[raw log]\t" << __FILE__  << ":" << __LINE__ << "\tFiber::~Fiber()id=" << m_id << std::endl;
     }
 
     void Fiber::reset(CallBackType cb){

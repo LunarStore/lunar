@@ -56,6 +56,7 @@ namespace lunar{
         typedef std::set<Timer::ptr, Timer::Comparator> TimerSetType;
         typedef RWMutex MutexType;
     public:
+        //interval：毫秒数
         Timer::ptr addTimer(uint64_t interval, Timer::CallBackType cb, bool isLoop = false);
         bool addTimer(Timer::ptr time);
 

@@ -1,7 +1,7 @@
 servers:
-    - address: ["0.0.0.0:8100"]
+    - address: ["0.0.0.0:8090"]
       keepalive: 1
-      timeout: 1000
+      timeout: 10000
       name: lunar/1.1
       accept_worker: accept
       io_worker: http_io

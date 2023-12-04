@@ -4,7 +4,7 @@
  * CreateTime : 2023-02-27 15:24
  * LastModified : 2023-02-27 15:24
  * Filename : stream.h
- * Description : copy sylar
+ * Description : copy from sylar
  ************************************/
 
 #ifndef __LUNAR_STREAM_H__

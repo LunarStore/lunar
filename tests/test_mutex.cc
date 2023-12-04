@@ -3,7 +3,7 @@
 #include "base/log.h"
 #include <functional>
 #include <unistd.h>
-lunar::Logger::ptr g_logger = LUNAR_LOG_NAME("system");
+static lunar::Logger::ptr g_logger = LUNAR_LOG_NAME("system");
 class FiberSemCallBack{
 public:
     FiberSemCallBack():m_fs(0){

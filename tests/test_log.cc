@@ -35,8 +35,8 @@ int main(){
     // logger->setFormatter(formatter);
     // logger->addAppender(lunar::LogAppender::ptr(new lunar::StdoutLogAppender()));
     // LUNAR_LOG_DEBUG(logger) << "hello logger";
-    // test_log();
+    test_log();
 
-    test_lock();
+    // test_lock();
     return 0;
 }

@@ -4,7 +4,7 @@
  * CreateTime : 2023-02-27 15:13
  * LastModified : 2023-02-27 15:13
  * Filename : bytearray.h
- * Description : copy sylar
+ * Description : copy right from sylar
  ************************************/
 
 #ifndef __LUNAR_BYTEARRAY_H__
