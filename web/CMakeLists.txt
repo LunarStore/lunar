@@ -19,4 +19,4 @@ add_library (out SHARED ${SRC_LIST})
 
 set_target_properties (out PROPERTIES OUTPUT_NAME "webLib")
 target_link_libraries(out yaml-cpp ${LIB_LIST} ${TESTFUNC_LIB})
-set (LIBRARY_OUTPUT_PATH ~/dir/Lunar/bin/module)
+set (LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/../bin/module)
