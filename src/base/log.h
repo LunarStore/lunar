@@ -40,7 +40,7 @@
 
 #define LUNAR_LOG_FATAL(logger) LUNAR_LOG_LEVEL(logger, lunar::LogLevel::Level::FATAL)
 
-#define LUNAR_ROLL_MAX_COUNT 10000
+#define LUNAR_ROLL_MAX_COUNT (1024 * 1024)
 
 #define LUNAR_LOG_ROOT() lunar::LoggerMgr::GetInstance()->getRoot()
 

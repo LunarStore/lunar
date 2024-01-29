@@ -55,6 +55,9 @@ mkdir -p /apps/work/lunar
 
 # 终端运行，让网站跑起来
 ../bin/test_application -s
+
+# 关闭防火墙
+systemctl stop firewalld
 ```
 
 # V0.0.2
@@ -96,3 +99,9 @@ mkdir -p /apps/work/lunar
     ![异步日志性能](./doc/photo/ASyncLongLog.png)
 
 2. 后面计划优化服务器的性能，然后实现一些简单的负载均衡、orm、rock等模块。
+
+## 更新点 --2024.01.29
+
+1. 修复 日志输出文件冗余问题 #4。
+
+2. 优化log模块的逻辑。

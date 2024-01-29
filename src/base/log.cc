@@ -1,7 +1,8 @@
 #include "base/log.h"
 #include "base/config.h"
-
+#include <assert.h>
 namespace lunar{
+    static Logger::ptr g_logger = LUNAR_LOG_ROOT();
 
     class FileFormatItem : public LogFormatter::FormatItem{
     public:
@@ -319,7 +320,7 @@ namespace lunar{
         reopen();
     }
     void FileLogAppender::reopen(){
-        if(m_of.is_open()){
+        if(m_of){
             m_of.close();
         }
         m_of.open(m_fileName, std::ios::out| std::ios::app);
@@ -329,12 +330,14 @@ namespace lunar{
         MutexType::Lock lock(m_mutex);
         time_t now = event->getTimeStamp();
 
-        // if(now >= m_lastFlush + 3){
-        //     m_lastFlush = now;
-        //     // reopen();
-        //     m_of.flush();
-        // }
+        if(now >= m_lastFlush + 3){
+            m_lastFlush = now;
+            reopen();   // 确保文件存在
+        }
         if(m_logCount == LUNAR_ROLL_MAX_COUNT){    //日志回滚
+            // to do
+            // 是否需要考虑开一个变量记录回滚次数，防止同一时间日志洪流，
+            // 导致now相同，拼接出同一文件名。
             m_fileName = m_prefixName + lunar::Time2Str(now) + ".txt";
             m_logCount = 0;
             m_lastFlush = now;
@@ -345,12 +348,13 @@ namespace lunar{
             m_logCount++;
 
             //debug
+            // 注释的话，日志无法即时输出到文件。
             m_of.flush();
         }
     }
 
     FileLogAppender::~FileLogAppender(){
-        if(m_of.is_open()){
+        if(m_of){
             m_of.close();
         }
     }
@@ -436,7 +440,8 @@ namespace lunar{
         MutexType::ReadLock lock(m_mutex);
         auto pos = m_loggers.find(name);
         if(pos == m_loggers.end()){
-            return m_root;
+            // 没有就返回nullptr
+            return nullptr;
         }
         return pos->second;
     }
@@ -499,7 +504,7 @@ namespace lunar{
 
     };
 
-        /**
+    /**
      * @brief 偏特化类型转换模板类YAMLString类型转化成LoggerDefine类型
      */
     template<>
@@ -510,8 +515,9 @@ namespace lunar{
             LoggerDefine res;
             if(!node["name"].IsDefined()){
                 //name未定义
-                std::cout << "log config error: name is null, " << node
-                        << std::endl;
+                // 配置没解析完，此时使用日志可能太危险，是否需要等配置解析完再使用日志？
+                LUNAR_LOG_ERROR(g_logger) << "log config error: name is null, " 
+                    << node;
                 throw std::logic_error("log config name is null");
             }else{
                 res.name = node["name"].as<std::string>();
@@ -540,20 +546,20 @@ namespace lunar{
                                 lad.m_prefixName = it["prefixName"].as<std::string>();
                             }else{
                                 //摒弃该appender
-                                std::cout << "log config error: appender type is FileLogAppender, but prefixName is undefine, " << it
-                                << std::endl;
+                                LUNAR_LOG_ERROR(g_logger) << "log config error: appender type is FileLogAppender, but prefixName is undefine, " 
+                                    << it;
 
                                 continue;
                             }
                         }else if(type == "AsyncAppender"){
                             //异步输出到文件
 
-                            //after fix...
+                            //to do
                             continue;
                         }else{
                             //未知类型，摒弃该appender
-                            std::cout << "log config error: appender type is unknow, " << it
-                              << std::endl;
+                            LUNAR_LOG_ERROR(g_logger) << "log config error: appender type is unknow, " 
+                                << it;
                             
                             continue;
                         }
@@ -611,36 +617,42 @@ namespace lunar{
         ConfigVar<std::set<LoggerDefine>>::ptr loggerDefines = 
             ConfigVarMgr::GetInstance()->lookUp("log", std::set<LoggerDefine>(), "log config");
         
-        Logger::ptr logger;
-        #define XX(name, logger) \
-        logger.reset(new Logger(name)); \
-        logger->addAppender(LogAppender::ptr(new FileLogAppender())); \
-        logger->addAppender(LogAppender::ptr(new StdoutLogAppender())); \
-        LoggerMgr::GetInstance()->addLogger(name, logger)
+        // 配置一下系统默认的system logger
+        #define XX(name) \
+        { \
+            Logger::ptr logger; \
+            logger.reset(new Logger(name)); \
+            logger->addAppender(LogAppender::ptr(new StdoutLogAppender())); \
+            LoggerMgr::GetInstance()->addLogger(name, logger); \
+        }while(0)
 
-        XX("system", logger);
+        XX("system");
         #undef XX
 
+        // 安装日志配置改变的回调。
         loggerDefines->addListener([](const std::set<LoggerDefine>& oldVal, 
             const std::set<LoggerDefine>& newVal){
-            //todo change LoggerManager...
-            Logger::ptr root = LoggerMgr::GetInstance()->getRoot();
-            LUNAR_LOG_INFO(LUNAR_LOG_ROOT())<< "on_logger_conf_changed";
+
+            LUNAR_LOG_INFO(g_logger)<< "on_logger_conf_changed";
             for(const auto &it : newVal){
                 auto old = oldVal.find(it);
                 Logger::ptr logger;
                 if(old != oldVal.end()){
                     //存在
-                    logger = LoggerMgr::GetInstance()->getLoggerByName(old->name);
+                    logger = LUNAR_LOG_NAME(old->name);
 
-                    LUNAR_ASSERT(logger != root);
+                    // oldVal所定义的logger一定是LoggerMgr的子集，不会存在LoggerMgr没有的logger。
+                    LUNAR_ASSERT(logger != nullptr);
                 }else{
                     //oldVal不存在但LoggerMgr可能存在
-                    LoggerMgr::GetInstance()->addLogger(it.name, Logger::ptr(new Logger(it.name)));
-                    
-                    logger = LoggerMgr::GetInstance()->getLoggerByName(it.name);
-                    LUNAR_ASSERT(!((it.name != "root") && (logger == root)));
+                    logger = LUNAR_LOG_NAME(it.name);
+
+                    if(logger == nullptr){
+                        logger.reset(new Logger(it.name));
+                        LoggerMgr::GetInstance()->addLogger(it.name, logger);
+                    }
                 }
+
                 //根据newVal -- it 修改logger
                 logger->clearAppender();
 
@@ -680,10 +692,10 @@ namespace lunar{
 
             //删除LoggerMgr中newVal不存在的logger
             for(const auto &it : oldVal){
-            auto rt = newVal.find(it);
-            if(rt == newVal.end()){
+                auto rt = newVal.find(it);
+                if(rt == newVal.end()){
                     LoggerMgr::GetInstance()->delLogger(it.name);
-            }
+                }
             }
 
         });
