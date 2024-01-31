@@ -58,7 +58,7 @@ namespace lunar{
         m_mgr->m_tss.erase(pos);
         wlock.unlock();
 
-        if(m_cb){
+        if(m_cb != nullptr){
             m_next = lunar::GetCurrentMiliSTime() + m_interval;
             m_mgr->addTimer(shared_from_this());
         }
@@ -75,6 +75,12 @@ namespace lunar{
         wlock.unlock();
 
         uint64_t start;
+
+        if(m_cb == nullptr){
+            LUNAR_ASSERT(false);
+            return false;
+        }
+
         if(fromNow){
             start = lunar::GetCurrentMiliSTime();
         }else{
@@ -129,6 +135,7 @@ namespace lunar{
         m_tss.erase(m_tss.begin(), end);
 
         for(auto itr = expired.begin(); itr != expired.end(); itr++){
+            LUNAR_ASSERT((*itr)->m_cb != nullptr);
             cbs.push_back((*itr)->m_cb);
             if((*itr)->m_isLoop){
                 (*itr)->m_next = (*itr)->m_interval + now_t->m_next;

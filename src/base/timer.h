@@ -46,7 +46,7 @@ namespace lunar{
         //是否循环
         bool m_isLoop = false;
         CallBackType m_cb = nullptr;
-        TimerManager* m_mgr = nullptr;
+        TimerManager* m_mgr = nullptr;  // 防止循环引用。
     };
 
     class TimerManager{

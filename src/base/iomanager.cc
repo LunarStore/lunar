@@ -307,11 +307,16 @@ namespace lunar{
                 Event triEvent = NONE;
                 FdContext::MutexType::Lock lock(fdctx->m_mutex);
 
+                // (EPOLLIN | EPOLLOUT) 整体可以作为一个叫 IOMASK的宏。
                 if(epevents[i].events & (EPOLLHUP | EPOLLERR)){
                     epevents[i].events |= ((EPOLLIN | EPOLLOUT) & fdctx->m_events);
                 }
-
-                triEvent = (Event)((READ | WRITE) & epevents[i].events & fdctx->m_events);
+                // 以fdctx关心的事件作为掩码，从epevents中萃取事件。
+                triEvent = (Event)(((READ | WRITE) & fdctx->m_events) & epevents[i].events);
+                /*
+                * 这里加锁后再次判断是必要的，因为可能存在在加锁前，同一个fd多次触发事件，
+                * 导致多个线程epoll_wait到同一fd，出现多线程操作同一fd的局面。
+                */
                 if((fdctx->m_events & triEvent) == NONE){
                     continue;
                 }
@@ -341,7 +346,8 @@ namespace lunar{
                     fdctx->TrigleEvent(WRITE);
                     m_penddingEventCount--;
                 }
-                
+                // for debug 确保m_penddingEventCount符合预期。
+                LUNAR_ASSERT((int)m_penddingEventCount.load() >= 0);
             }
 
             Fiber::YieldToHold();

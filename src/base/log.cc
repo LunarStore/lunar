@@ -635,7 +635,7 @@ namespace lunar{
 
             LUNAR_LOG_INFO(g_logger)<< "on_logger_conf_changed";
             for(const auto &it : newVal){
-                auto old = oldVal.find(it);
+                auto old = oldVal.find(it); // 通过logger.name查找
                 Logger::ptr logger;
                 if(old != oldVal.end()){
                     //存在
@@ -643,11 +643,15 @@ namespace lunar{
 
                     // oldVal所定义的logger一定是LoggerMgr的子集，不会存在LoggerMgr没有的logger。
                     LUNAR_ASSERT(logger != nullptr);
+
+                    if((*old) == it){   // 该判断在后面的application模块是非常必要，可以确保不重复创建日志文件。
+                        continue;   // 配置无变化。
+                    }
                 }else{
-                    //oldVal不存在但LoggerMgr可能存在
+                    //oldVal不存在但LoggerMgr可能存在比如root
                     logger = LUNAR_LOG_NAME(it.name);
 
-                    if(logger == nullptr){
+                    if(logger == nullptr){  // 新增
                         logger.reset(new Logger(it.name));
                         LoggerMgr::GetInstance()->addLogger(it.name, logger);
                     }
