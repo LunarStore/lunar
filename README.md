@@ -2,7 +2,7 @@
 
 **前言**
 
-lunar是是精简版的sylar，作者重写了sylar的base模块。
+lunar是精简版的sylar，作者重写了sylar的base模块。
 
 sylar是一个基于协程的服务器框架。同go语言思想一样，整个框架贯彻协程化的思想，淡化线程的存在。笔者有幸反复阅读sylar数次，并重写过base核心模块。该项目是我真正入门C++的第一个项目，我也将其作为本科毕设，顺利通过答辩。非常感谢sylar的作者能将多年从业经验浓缩在这个项目当中，这真的是为后来者点了一扇关键的灯。
 
@@ -24,10 +24,8 @@ sylar是一个基于协程的服务器框架。同go语言思想一样，整个�
 去除了sylar原来的负载均衡、数据库连接、protobuff、orm、zk等模块。（实际上是太菜了，这些模块没跟下去。）
 
 ```bash
-#源码下载
 git clone https://github.com/LunarStore/lunar.git 
 
-# 安装boost库
 yum install boost-devel # boost库
 
 # 安装yaml-cpp（可能需要升级cmake
@@ -37,27 +35,22 @@ mkdir build && cd build
 cmake .. && make -j
 sudo make install
 
-# 创建build目录
 cd lunar
 mkdir build
 cd build
 
-# 在build目录生成makefile文件
-cmake ..
-
-# 编译
-make -j2
+cmake .. && make -j4
 
 # 建立一个必要目录
 # 否则会报错：
 # 2024-01-28 05:01:06	[ERROR]	[system]	/root/workspace/lunar/src/init/application.cc:116	open pidfile /apps/work/lunar/lunar.pid failed
 mkdir -p /apps/work/lunar
 
-# 终端运行，让网站跑起来
-../bin/test_application -s
-
 # 关闭防火墙
 systemctl stop firewalld
+
+# 终端运行，让网站跑起来
+../bin/test_application -s
 ```
 
 # V0.0.2
@@ -90,14 +83,33 @@ systemctl stop firewalld
 
 1. 实现了基于协程的异步日志，将日志的输出效率提升了近一倍。
 
-    - 同步日志性能测试如下：
+    - 同步短日志性能测试如下：
 
-    ![同步日志性能](./doc/photo/SyncLongLog.png)
+        ```
+        [root@localhost build]# ../bin/test_AsyncLog syn slog 1
+        short log [avg(30)]:   52368.23 msg/s, 115.43 MiB/s
+        ```
 
-    - 异步日志性能测试如下：
+    - 同步长日志性能测试如下：
 
-    ![异步日志性能](./doc/photo/ASyncLongLog.png)
+        ```
+        [root@localhost build]# ../bin/test_AsyncLog syn llog 1
+        long log [avg(30)]:   50431.80 msg/s, 2307.17 MiB/s
+        ```
 
+    - 异步短日志性能测试如下：
+
+        ```
+        [root@localhost build]# ../bin/test_AsyncLog asyn slog 1
+        short log [avg(30)]:  109147.63 msg/s, 281.17 MiB/s
+        ```
+
+    - 异步长日志性能测试如下：
+
+        ```
+        [root@localhost build]# ../bin/test_AsyncLog asyn llog 1
+        long log [avg(30)]:   73561.07 msg/s, 3498.23 MiB/s
+        ```
 2. 后面计划优化服务器的性能，然后实现一些简单的负载均衡、orm、rock等模块。
 
 ## 更新点 --2024.01.29

@@ -292,12 +292,15 @@ namespace lunar{
         }
     }
 
-    void LogFormatter::format(LogEvent::ptr event, std::ostream& os){
+    int LogFormatter::format(LogEvent::ptr event, std::ostream& os){
         std::stringstream ss;
         for(auto it : m_items){
             it->format(event, ss);
         }
-        os << ss.str();
+        std::string msg(ss.str());
+        os << msg;
+
+        return (int)msg.length();
     }
 
     LogFormatter::ptr LogAppender::getFormatter() {
@@ -312,6 +315,11 @@ namespace lunar{
         MutexType::Lock lock(m_mutex);
         m_formatter.reset(new LogFormatter(fmt));
     }
+
+    size_t LogAppender::getSize(){
+        MutexType::Lock lock(m_mutex);
+        return  m_size;
+    };
     FileLogAppender::FileLogAppender(const char* prefix):
         m_prefixName(prefix),
         m_logCount(0),
@@ -344,7 +352,7 @@ namespace lunar{
             reopen();
         }
         if(m_level <= event->getLevel()){
-            m_formatter->format(event, m_of);
+            LogAppender::m_size += (size_t)m_formatter->format(event, m_of);
             m_logCount++;
 
             //debug
@@ -363,7 +371,7 @@ namespace lunar{
     void StdoutLogAppender::log(LogEvent::ptr event){
         MutexType::Lock lock(m_mutex);
         if(m_level <= event->getLevel()){
-            m_formatter->format(event, std::cout);
+            LogAppender::m_size += m_formatter->format(event, std::cout);
         }
     }
 
@@ -421,6 +429,15 @@ namespace lunar{
     void Logger::setName(const std::string& name) {
         MutexType::WriteLock lock(m_mutex);
         m_name = name;
+    }
+
+    size_t Logger::getTotalSize(size_t& out){
+        out = 0;
+        MutexType::ReadLock lock(m_mutex);
+        for(auto &it : m_appenders){
+            out += it->getSize();
+        }
+        return m_appenders.size();
     }
 
     LoggerManager::LoggerManager(){
@@ -531,7 +548,7 @@ namespace lunar{
                 }//else     //默认m_formatter = ""
 
                 if(node["appenders"].IsDefined()){
-                    for(int i = 0; i < node["appenders"].size(); i++){
+                    for(int i = 0; i < (int)node["appenders"].size(); i++){
                         YAML::Node it = node["appenders"][i];
                         LogAppenderDefine lad;
                         std::string type = it["type"].IsDefined() ? it["type"].as<std::string>() : "";

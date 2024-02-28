@@ -34,7 +34,7 @@ namespace lunar{
         MutexType::Lock lock(m_mutex);
 
         if(m_level <= event->getLevel()){
-            m_formatter->format(event, m_buffer);
+            LogAppender::m_size += m_formatter->format(event, m_buffer);
             m_logCount++;   //日志切割
 
             if(m_logCount >= m_logSplite){ //过大，切换buff

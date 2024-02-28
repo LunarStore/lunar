@@ -136,7 +136,7 @@ namespace lunar{
         };
     public:
         LogFormatter(const std::string &pattern = "%d{%Y-%m-%d %H:%M:%S}%T%t%T%N%T%f%T[%p]%T[%c]%T%F:%l%T%m%n");
-        void format(LogEvent::ptr event, std::ostream& os);
+        int format(LogEvent::ptr event, std::ostream& os);
     private:
         void init();
     private:
@@ -158,9 +158,13 @@ namespace lunar{
         void setFormatter(const std::string& fmt);
         LogLevel::Level getLevel()const { return m_level; }
         void setLevel(LogLevel::Level level) { m_level = level; }
+
+        // for test
+        size_t getSize();
     protected:
         LogLevel::Level m_level = LogLevel::Level::DEBUG;
         LogFormatter::ptr m_formatter;
+        size_t m_size = 0;  // 记录输出到该LogAppender的日志的字节数。
         MutexType m_mutex;
     };
 
@@ -204,6 +208,8 @@ namespace lunar{
         void setFormatter(const std::string& fmt);
         std::string getName();
         void setName(const std::string& name);
+
+        size_t getTotalSize(size_t& out);
     private:
         std::list<LogAppender::ptr> m_appenders;
         LogLevel::Level m_level = LogLevel::Level::DEBUG;
