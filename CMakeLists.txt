@@ -51,55 +51,55 @@ set(SRC_LIST
 message(STATUS "-----SRC_LIST:${SRC_LIST}-----LIB_LIST:${LIB_LIST}---YAML-CPP:${yaml}")
 add_compile_options(-std=c++11 -Wall -g)
 
-# set (LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
-# add_library (lunarLib SHARED ${SRC_LIST})
+set (LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
+add_library (lunarLib STATIC ${SRC_LIST})
 # set_target_properties (lunarLib PROPERTIES OUTPUT_NAME "lunarLib")
-# target_link_libraries(lunarLib yaml-cpp ${LIB_LIST})
+target_link_libraries(lunarLib yaml-cpp ${LIB_LIST})
 
-add_executable(test_log tests/test_log.cc ${SRC_LIST})
-target_link_libraries(test_log ${LIB_LIST})
+add_executable(test_log tests/test_log.cc)
+target_link_libraries(test_log lunarLib)
 
-add_executable(test_config tests/test_config.cc ${SRC_LIST})
-target_link_libraries(test_config ${LIB_LIST})
+add_executable(test_config tests/test_config.cc)
+target_link_libraries(test_config lunarLib)
 
-add_executable(test_thread tests/test_thread.cc ${SRC_LIST})
-target_link_libraries(test_thread ${LIB_LIST})
+add_executable(test_thread tests/test_thread.cc)
+target_link_libraries(test_thread  lunarLib)
 
-add_executable(test_fiber tests/test_fiber.cc ${SRC_LIST})
-target_link_libraries(test_fiber ${LIB_LIST})
+add_executable(test_fiber tests/test_fiber.cc)
+target_link_libraries(test_fiber  lunarLib)
 
-add_executable(test_scheduler tests/test_scheduler.cc ${SRC_LIST})
-target_link_libraries(test_scheduler ${LIB_LIST})
+add_executable(test_scheduler tests/test_scheduler.cc)
+target_link_libraries(test_scheduler  lunarLib)
 
-add_executable(test_iomanager tests/test_iomanager.cc ${SRC_LIST})
-target_link_libraries(test_iomanager ${LIB_LIST})
+add_executable(test_iomanager tests/test_iomanager.cc)
+target_link_libraries(test_iomanager  lunarLib)
 
-add_executable(test_hook tests/test_hook.cc ${SRC_LIST})
-target_link_libraries(test_hook ${LIB_LIST})
+add_executable(test_hook tests/test_hook.cc)
+target_link_libraries(test_hook  lunarLib)
 
-add_executable(test_address tests/test_address.cc ${SRC_LIST})
-target_link_libraries(test_address ${LIB_LIST})
+add_executable(test_address tests/test_address.cc)
+target_link_libraries(test_address  lunarLib)
 
-add_executable(test_socket tests/test_socket.cc ${SRC_LIST})
-target_link_libraries(test_socket ${LIB_LIST})
+add_executable(test_socket tests/test_socket.cc)
+target_link_libraries(test_socket  lunarLib)
 
-add_executable(test_tcpserver tests/test_tcpserver.cc ${SRC_LIST})
-target_link_libraries(test_tcpserver ${LIB_LIST})
+add_executable(test_tcpserver tests/test_tcpserver.cc)
+target_link_libraries(test_tcpserver  lunarLib)
 
-add_executable(test_httpparser tests/test_httpparser.cc ${SRC_LIST})
-target_link_libraries(test_httpparser ${LIB_LIST})
+add_executable(test_httpparser tests/test_httpparser.cc)
+target_link_libraries(test_httpparser  lunarLib)
 
-add_executable(test_httpserver tests/test_httpserver.cc ${SRC_LIST})
-target_link_libraries(test_httpserver ${LIB_LIST})
+add_executable(test_httpserver tests/test_httpserver.cc)
+target_link_libraries(test_httpserver  lunarLib)
 
-add_executable(test_daemon tests/test_daemon.cc ${SRC_LIST})
-target_link_libraries(test_daemon ${LIB_LIST})
+add_executable(test_daemon tests/test_daemon.cc)
+target_link_libraries(test_daemon  lunarLib)
 
-add_executable(test_application tests/test_application.cc ${SRC_LIST})
-target_link_libraries(test_application ${LIB_LIST})
+add_executable(test_application tests/test_application.cc)
+target_link_libraries(test_application  lunarLib)
 
-add_executable(test_mutex tests/test_mutex.cc ${SRC_LIST})
-target_link_libraries(test_mutex ${LIB_LIST})
+add_executable(test_mutex tests/test_mutex.cc)
+target_link_libraries(test_mutex  lunarLib)
 
-add_executable(test_AsyncLog tests/test_AsyncLog.cc ${SRC_LIST})
-target_link_libraries(test_AsyncLog ${LIB_LIST})
+add_executable(test_AsyncLog tests/test_AsyncLog.cc)
+target_link_libraries(test_AsyncLog  lunarLib)
